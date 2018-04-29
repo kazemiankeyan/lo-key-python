@@ -9,21 +9,6 @@ client_credentials_manager = SpotifyClientCredentials(client_id='9e1915c12f364fc
 sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
 def main():
-    # if len(sys.argv) > 1:
-    #     # username = sys.argv[1]
-    #     artist = sys.argv[1]
-    # else:
-    #     print "Usage: %s [username]" % (sys.argv[0],)
-    #     sys.exit()
-
-    # playlists = sp.user_playlists(username)
-    # for playlist in playlists['items']:
-    #     print playlist['tracks']
-
-    # results = sp.search(q=artist, limit=20)
-    # for i, t in enumerate(results['tracks']['items']):
-    #     print ' ', i, t['name']
-
     artist = raw_input("Hello! Welcome to Lo-Key.\n \nPlease search an artist: ")
     result = sp.search(q='artist:' + artist, type='artist', limit=50)
     print("\n")
@@ -36,7 +21,6 @@ def main():
 
     print("\n")
     sel = input("Please enter the number of the artist you'd like to find similarities to: ")
-    #print(artist_arr[sel - 1])
 
     print("\n<-- TESTING DATA -->")
 
@@ -62,16 +46,6 @@ def getRelatedArtists(artist, list, visited, fringe):
                 if (a['followers']['total'] < 150000 and a['popularity'] < 55) and (a['followers']['total'] > 100 and a['popularity'] > 5):
                     list.add((a['name'], a['id']))
                 fringe.put((a['name'], a['id']))
-
-    # similar_results = sp.artist_related_artists(artist[1])
-    # for a in similar_results['artists']:
-    #     if not(a['id'] in visited):
-    #         visited.add(a['id'])
-    #         print a['name'],"| POPULARITY PERCENTAGE:",a['popularity'],"| FOLLOWERS:",a['followers']['total']
-    #         if (a['followers']['total'] < 150000 and a['popularity'] < 55) and (a['followers']['total'] > 100 and a['popularity'] > 5):
-    #             list.add((a['name'], a['id']))
-    #         getRelatedArtists((a['name'], a['id']), list, visited)
-
 
 if __name__ == '__main__':
     main()
