@@ -1,5 +1,6 @@
 import os
 import sys
+import Queue
 import spotipy
 import spotipy.util as util
 from spotipy.oauth2 import SpotifyClientCredentials
@@ -40,7 +41,9 @@ def main():
     print("\n<-- TESTING DATA -->")
 
     undiscovered_results = set()
-    getRelatedArtists(artist_arr[sel - 1], undiscovered_results, {artist_arr[sel - 1][1]})
+    fringe = Queue.Queue()
+    fringe.put(artist_arr[sel - 1])
+    getRelatedArtists(artist_arr[sel - 1], undiscovered_results, {artist_arr[sel - 1][1]}, fringe)
 
     print("<!-- TESTING DATA --!>\n")
 
@@ -48,18 +51,26 @@ def main():
     for i in undiscovered_results:
         print(i[0])
 
-def getRelatedArtists(artist, list, visited):
-    if len(list) >= 10:
-        return
+def getRelatedArtists(artist, list, visited, fringe):
+    while not(fringe.empty()) and len(list) < 15:
+        current_artist = fringe.get()
+        similar_results = sp.artist_related_artists(current_artist[1])
+        for a in similar_results['artists']:
+            if not(a['id'] in visited):
+                visited.add(a['id'])
+                print a['name'],"| POPULARITY PERCENTAGE:",a['popularity'],"| FOLLOWERS:",a['followers']['total']
+                if (a['followers']['total'] < 150000 and a['popularity'] < 55) and (a['followers']['total'] > 100 and a['popularity'] > 5):
+                    list.add((a['name'], a['id']))
+                fringe.put((a['name'], a['id']))
 
-    similar_results = sp.artist_related_artists(artist[1])
-    for a in similar_results['artists']:
-        if not(a['id'] in visited):
-            visited.add(a['id'])
-            print a['name'],"| POPULARITY PERCENTAGE:",a['popularity'],"| FOLLOWERS:",a['followers']['total']
-            if (a['followers']['total'] < 150000 and a['popularity'] < 60) and (a['followers']['total'] > 100 and a['popularity'] > 5):
-                list.add((a['name'], a['id']))
-            getRelatedArtists((a['name'], a['id']), list, visited)
+    # similar_results = sp.artist_related_artists(artist[1])
+    # for a in similar_results['artists']:
+    #     if not(a['id'] in visited):
+    #         visited.add(a['id'])
+    #         print a['name'],"| POPULARITY PERCENTAGE:",a['popularity'],"| FOLLOWERS:",a['followers']['total']
+    #         if (a['followers']['total'] < 150000 and a['popularity'] < 55) and (a['followers']['total'] > 100 and a['popularity'] > 5):
+    #             list.add((a['name'], a['id']))
+    #         getRelatedArtists((a['name'], a['id']), list, visited)
 
 
 if __name__ == '__main__':
