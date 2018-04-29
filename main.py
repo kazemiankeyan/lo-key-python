@@ -8,12 +8,12 @@ client_credentials_manager = SpotifyClientCredentials(client_id='9e1915c12f364fc
 sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
 def main():
-    if len(sys.argv) > 1:
-        # username = sys.argv[1]
-        artist = sys.argv[1]
-    else:
-        print "Usage: %s [username]" % (sys.argv[0],)
-        sys.exit()
+    # if len(sys.argv) > 1:
+    #     # username = sys.argv[1]
+    #     artist = sys.argv[1]
+    # else:
+    #     print "Usage: %s [username]" % (sys.argv[0],)
+    #     sys.exit()
 
     # playlists = sp.user_playlists(username)
     # for playlist in playlists['items']:
@@ -23,24 +23,32 @@ def main():
     # for i, t in enumerate(results['tracks']['items']):
     #     print ' ', i, t['name']
 
+    artist = raw_input("Hello! Welcome to Lo-Key.\n \nPlease search an artist: ")
     result = sp.search(q='artist:' + artist, type='artist', limit=50)
-
+    print("\n")
     artist_arr = []
     i = 1
     for artist in result['artists']['items']:
-        print "",i,":",artist['name'], artist['id']
+        print "",i,":",artist['name']
         artist_arr.append((artist['name'], artist['id']))
         i += 1
 
-    sel = input("Please select the number of the artist you'd like to find similarities to: ")
+    print("\n")
+    sel = input("Please enter the number of the artist you'd like to find similarities to: ")
     #print(artist_arr[sel - 1])
 
+    print("\n<-- TESTING DATA -->")
+
     undiscovered_results = getRelatedArtists(artist_arr[sel - 1])
-    for artist in undiscovered_results:
-        undiscovered_results = undiscovered_results.union(getRelatedArtists(artist))
 
+    while True:
+        for artist in undiscovered_results:
+            undiscovered_results = undiscovered_results.union(getRelatedArtists(artist))
+        if len(undiscovered_results) >= 50:
+            break
+    print("<!-- TESTING DATA --!>\n")
 
-    print("Here are a list of similar \"Lowkey Artists\":")
+    print "\nHere are a list of similar \"Lo-Key Artists\" to",artist_arr[sel - 1][0],":\n"
     for i in undiscovered_results:
         print(i[0])
 
@@ -49,8 +57,8 @@ def getRelatedArtists(artist):
     undiscovered_results = set()
 
     for artist in similar_results['artists']:
-        # print(artist['genres'])
-        if artist['followers']['total'] < 100000 and artist['popularity'] < 50:
+        print artist['name'],"| POPULARITY PERCENTAGE:",artist['popularity'],"| FOLLOWERS:",artist['followers']['total']
+        if (artist['followers']['total'] < 150000 and artist['popularity'] < 60) and (artist['followers']['total'] > 100 and artist['popularity'] > 5):
             undiscovered_results.add((artist['name'], artist['id']))
     return undiscovered_results
 
