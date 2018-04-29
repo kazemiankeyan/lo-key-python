@@ -39,28 +39,27 @@ def main():
 
     print("\n<-- TESTING DATA -->")
 
-    undiscovered_results = getRelatedArtists(artist_arr[sel - 1])
+    undiscovered_results = set()
+    getRelatedArtists(artist_arr[sel - 1], undiscovered_results, {artist_arr[sel - 1][1]})
 
-    while True:
-        for artist in undiscovered_results:
-            undiscovered_results = undiscovered_results.union(getRelatedArtists(artist))
-        if len(undiscovered_results) >= 50:
-            break
     print("<!-- TESTING DATA --!>\n")
 
     print "\nHere are a list of similar \"Lo-Key Artists\" to",artist_arr[sel - 1][0],":\n"
     for i in undiscovered_results:
         print(i[0])
 
-def getRelatedArtists(artist):
-    similar_results = sp.artist_related_artists(artist[1])
-    undiscovered_results = set()
+def getRelatedArtists(artist, list, visited):
+    if len(list) >= 10:
+        return
 
-    for artist in similar_results['artists']:
-        print artist['name'],"| POPULARITY PERCENTAGE:",artist['popularity'],"| FOLLOWERS:",artist['followers']['total']
-        if (artist['followers']['total'] < 150000 and artist['popularity'] < 60) and (artist['followers']['total'] > 100 and artist['popularity'] > 5):
-            undiscovered_results.add((artist['name'], artist['id']))
-    return undiscovered_results
+    similar_results = sp.artist_related_artists(artist[1])
+    for a in similar_results['artists']:
+        if not(a['id'] in visited):
+            visited.add(a['id'])
+            print a['name'],"| POPULARITY PERCENTAGE:",a['popularity'],"| FOLLOWERS:",a['followers']['total']
+            if (a['followers']['total'] < 150000 and a['popularity'] < 60) and (a['followers']['total'] > 100 and a['popularity'] > 5):
+                list.add((a['name'], a['id']))
+            getRelatedArtists((a['name'], a['id']), list, visited)
 
 
 if __name__ == '__main__':
