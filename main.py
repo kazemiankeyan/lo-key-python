@@ -40,7 +40,7 @@ def main():
         undiscovered_results = undiscovered_results.union(getRelatedArtists(artist))
 
 
-    print("Here are a list of similar \"Lowkey Artists\":)
+    print("Here are a list of similar \"Lowkey Artists\":")
     for i in undiscovered_results:
         print(i[0])
 
