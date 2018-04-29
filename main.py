@@ -33,21 +33,24 @@ def main():
         i += 1
 
     sel = input("Please select the number of the artist you'd like to find similarities to: ")
-    print(artist_arr[sel - 1])
+    #print(artist_arr[sel - 1])
 
     undiscovered_results = getRelatedArtists(artist_arr[sel - 1])
     for artist in undiscovered_results:
         undiscovered_results = undiscovered_results.union(getRelatedArtists(artist))
 
-    print(undiscovered_results)
+
+    print("Here are a list of similar \"Lowkey Artists\":)
+    for i in undiscovered_results:
+        print(i[0])
 
 def getRelatedArtists(artist):
     similar_results = sp.artist_related_artists(artist[1])
     undiscovered_results = set()
 
     for artist in similar_results['artists']:
+        # print(artist['genres'])
         if artist['followers']['total'] < 100000 and artist['popularity'] < 50:
-            print(artist['popularity'])
             undiscovered_results.add((artist['name'], artist['id']))
     return undiscovered_results
 
