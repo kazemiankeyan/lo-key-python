@@ -80,10 +80,6 @@ def gen_artist_profile(artist):
 
     return profile
 
-
-if __name__ == '__main__':
-    main()
-
 '''
 -------------------------------------------------------------
 #MARK :- Old Code:
@@ -125,3 +121,7 @@ def searchForArtistsInGenres(genres, targest_artist_profile, artist):
     while not underrated.empty():
         next_item = underrated.get()
         print(next_item)
+
+
+if __name__ == '__main__':
+    main()
