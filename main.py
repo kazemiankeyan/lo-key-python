@@ -19,31 +19,62 @@ def main():
     for artist in result['artists']['items']:
         print "",i,":",artist['name']
         print artist['genres']
-        artist_arr.append((artist['name'], artist['id'], artist['followers']['total'], artist['popularity']))
+        artist_arr.append((artist['name'], artist['id'], artist['followers']['total'], artist['popularity'], artist['genres']))
         i += 1
     print("\n")
     sel = input("Please enter the number of the artist you'd like to find similarities to: ")
 
-    artist_genres = artist_arr[sel - 1][2]
+    artist_genres = artist_arr[sel - 1][4]
     targest_artist_profile = gen_artist_profile(artist_arr[sel - 1])
-    search(targest_artist_profile, artist_arr[sel - 1])
+    q1 = searchForArtistsInGenres(artist_genres, targest_artist_profile, artist_arr[sel - 1])
+    q2 = search_dfs(targest_artist_profile, artist_arr[sel - 1])
+    q3 = search_bfs(targest_artist_profile, artist_arr[sel - 1])
 
-def search(targest_artist_profile, ogartist):
+    for i in range(0, q1.qsize()):
+        item = q1.get()
+        if item not in q2.queue:
+            q2.put(item)
+
+    for i in range(0, q2.qsize()):
+        item = q2.get()
+        if item not in q3.queue:
+            q3.put(item)
+
+    while not q3.empty():
+        print(q3.get())
+
+def search_dfs(targest_artist_profile, ogartist):
     underrated = PriorityQueue()
     lokey = set()
     fringe = q.Queue()
     fringe.put(ogartist)
-    getRelatedArtists_bfs(ogartist, lokey, {ogartist[1]}, fringe, [])
+    getRelatedArtists_dfs(ogartist, lokey, {ogartist[1]}, [])
+    for artist in lokey:
+        current_profile = gen_artist_profile(artist)
+        priority = generate_profile_diff(targest_artist_profile, current_profile)
+        if priority == -1:
+            continue
+        underrated.put((priority, artist[0], artist[2], artist[3]))
+
+    return underrated
+
+def search_bfs(targest_artist_profile, ogartist):
+    underrated = PriorityQueue()
+    lokey = set()
+    fringe = q.Queue()
+    fringe.put(ogartist)
+    getRelatedArtists_bfs(ogartist, lokey, {ogartist[1]},fringe, [])
     for artist in lokey:
         current_profile = gen_artist_profile(artist)
         priority = generate_profile_diff(targest_artist_profile, current_profile)
         underrated.put((priority, artist[0], artist[2], artist[3]))
 
-    while not underrated.empty():
-        print(underrated.get())
+    return underrated
 
 def generate_profile_diff(base_profile, comp_profile):
     diff = 0
+    if not comp_profile:
+        return -1
     for key in base_profile:
         diff += abs(base_profile[key] - comp_profile[key])
     return diff
@@ -55,8 +86,8 @@ def getRelatedArtists_bfs(artist, list, visited, fringe, genres):
         for a in similar_results['artists']:
             if not(a['id'] in visited):
                 visited.add(a['id'])
-                print a['name'],"| POPULARITY PERCENTAGE:",a['popularity'],"| FOLLOWERS:",a['followers']['total']
                 if (a['followers']['total'] < 150000 and a['popularity'] < 55) and (a['followers']['total'] > 100 and a['popularity'] > 5):
+                    print a['name'],"| POPULARITY PERCENTAGE:",a['popularity'],"| FOLLOWERS:",a['followers']['total']
                     list.add((a['name'], a['id'], a['followers']['total'], a['popularity']))
                     genres += a['genres']
                 fringe.put((a['name'], a['id']))
@@ -93,16 +124,16 @@ def getRelatedArtists_dfs(artist, list, visited, genres):
     for a in similar_results['artists']:
         if not(a['id'] in visited):
             visited.add(a['id'])
-            if (a['followers']['total'] < 150000 and a['popularity'] < 60) and (a['followers']['total'] > 100 and a['popularity'] > 5):
+            if (a['followers']['total'] < 150000 and a['popularity'] < 50) and (a['followers']['total'] > 100 and a['popularity'] > 5):
                 print(a['name'], "| POPULARITY: ", a['popularity'], "| FOLLOWERS:", a['followers']['total'])
                 list.add((a['name'], a['id'], a['followers']['total'], a['popularity']))
                 genres += a['genres']
-            getRelatedArtists((a['name'], a['id']), list, visited, genres)
+            getRelatedArtists_dfs((a['name'], a['id']), list, visited, genres)
 
 def searchForArtistsInGenres(genres, targest_artist_profile, artist):
     underrated = PriorityQueue()
-    if genres.empty():
-        getRelatedArtists
+    #if genres.empty():
+        #getRelatedArtists
     for genre in genres:
         offset = 0
         limit = 50
@@ -118,9 +149,7 @@ def searchForArtistsInGenres(genres, targest_artist_profile, artist):
                     priority = generate_profile_diff(targest_artist_profile, current_profile)
                     underrated.put((priority, result['name'], result['id'], result['genres']))
 
-    while not underrated.empty():
-        next_item = underrated.get()
-        print(next_item)
+    return underrated
 
 
 if __name__ == '__main__':

@@ -113,8 +113,8 @@ def getRelatedArtists_bfs(artist, list, visited, fringe, genres):
         for a in similar_results['artists']:
             if not(a['id'] in visited):
                 visited.add(a['id'])
-                print a['name'],"| POPULARITY PERCENTAGE:",a['popularity'],"| FOLLOWERS:",a['followers']['total']
                 if (a['followers']['total'] < 150000 and a['popularity'] < 55) and (a['followers']['total'] > 100 and a['popularity'] > 5):
+                    print a['name'],"| POPULARITY PERCENTAGE:",a['popularity'],"| FOLLOWERS:",a['followers']['total']
                     list.add((a['name'], a['id'], a['followers']['total'], a['popularity']))
                     genres += a['genres']
                 fringe.put((a['name'], a['id']))

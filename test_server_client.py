@@ -26,7 +26,7 @@ def main():
         i += 1
     print("\n")
     sel = input("Please enter the number of the artist you'd like to find similarities to: ")
-    print "searching for similarities to", str(artist_arr[sel - 1][0]), "..."
+    print "searching for similarities to", str(artist_arr[sel - 1][0]), "...\n"
 
     try :
         s = socket.socket()
@@ -55,7 +55,7 @@ def main():
             else:
                 break
         results = results[:-2]
-        print '-------------results--------------'
+        print '-------------results--------------\n'
         print results
         print '-------------results--------------'
         s.close()
