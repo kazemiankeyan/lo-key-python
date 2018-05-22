@@ -4,12 +4,15 @@ import socket
 import thread
 import time
 import os
+import json
+import ctypes
 import spotipy
 import Queue as q
 import multiprocessing as mp
 from multiprocessing import Process, Queue
 import spotipy.util as util
 from spotipy.oauth2 import SpotifyClientCredentials
+from pympler import asizeof
 from Queue import PriorityQueue
 
 
@@ -32,7 +35,57 @@ def main():
         print "Error creating socket: %s" %e
         sys.exit(1)
 
+def artist_search_input(connection, client_address):
+    print("trying to search for artist")
+    try:
+        artist_search_data = connection.recv(4)
+    except socket.error, e:
+        print "Error getting search artist name length: %s" %e
+        sys.exit(1)
+
+    artist_name_length = struct.unpack('<1I', artist_search_data)[0]
+    print(type(artist_name_length))
+
+    artistName = ""
+    try:
+        artistName = connection.recv(artist_name_length)
+    except socket.error, e:
+        print "Error getting search artist name: %s" %e
+        sys.exit(1)
+
+    print(artistName)
+
+    result = sp.search(q='artist:' + artistName, type='artist', limit=50)
+    artist_arr = []
+    for artist in result['artists']['items']:
+        artist_arr.append((artist['name'], artist['id']))
+
+    a = (json.dumps({"a": artist_arr})).encode()
+    json_file_size = str(len(a))
+
+    print(json_file_size)
+    connection.send(json_file_size)
+    connection.send("\n")
+    connection.send(a)
+    print(a)
+
 def handle_connection(connection, client_address):
+    print("connection established");
+    try:
+        request_type = connection.recv(2)
+    except socket.error, e:
+        print "Error getting requst type"
+        sys.exit(1)
+
+    print("recieved request type")
+    request_type = request_type[:-1]
+    if request_type == '0':
+        artist_search_input(connection, client_address)
+    elif request_type == '1':
+        related_artist_search(connection, client_address)
+    connection.close()
+
+def related_artist_search(connection, client_add):
     unpacker = struct.Struct('I I')
     artist_length_data = ''
     try:
@@ -63,7 +116,6 @@ def handle_connection(connection, client_address):
     targest_artist_profile = gen_artist_profile(artist)
     search(targest_artist_profile, artist, connection)
     connection.send('\r\n')
-    connection.close()
 
 def search(targest_artist_profile, ogartist, connection):
     underrated = PriorityQueue()
@@ -89,10 +141,12 @@ def search(targest_artist_profile, ogartist, connection):
         item = qu.get()
         print item
         underrated.put(item)
+
+    results = []
     while not underrated.empty():
         item = underrated.get()
-        print item
-        connection.send(str(item) + '\n')
+        results.append(item)
+        connection.send((json.dumps({"a": results})).encode())
 
 def generateProfilePriority(artists, targest_artist_profile, qu):
     for artist in artists:
