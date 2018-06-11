@@ -86,34 +86,23 @@ def handle_connection(connection, client_address):
     connection.close()
 
 def related_artist_search(connection, client_add):
-    unpacker = struct.Struct('I I')
-    artist_length_data = ''
+    artist_id_data = ''
     try:
-        artist_length_data = connection.recv(unpacker.size)
+        artist_id_data = connection.recv(4)
     except socket.error, e:
             print "Error getting artist name length: %s" %e
             sys.exit(1)
-    artist_length_data = unpacker.unpack(artist_length_data)
-    artist_name_length = artist_length_data[0]
-    artist_id_length = artist_length_data[1]
+    artist_id_length = struct.unpack('<1I', artist_id_data)[0]
 
-    artistData = ""
-    unpacker = struct.Struct(str(artist_name_length) + 's' + str(artist_id_length) + 's I I')
-    while True:
-        try:
-            data = connection.recv(unpacker.size + 2)
-        except socket.error, e:
-                break
-        if len(data) != 0:
-            artistData += data
-            if artistData[-2:].decode("ascii") == '\r\n':
-                break
-        else:
-            break
-    artistData = artistData[:-2]
-    artist = unpacker.unpack(artistData)
+    artist_id = ""
+    try:
+        artist_id = connection.recv(artist_id_length)
+    except socket.error, e:
+        print "Error getting search artist name: %s" %e
+        sys.exit(1)
 
-    targest_artist_profile = gen_artist_profile(artist)
+
+    targest_artist_profile = gen_artist_profile(artist_id)
     search(targest_artist_profile, artist, connection)
     connection.send('\r\n')
 
@@ -146,7 +135,15 @@ def search(targest_artist_profile, ogartist, connection):
     while not underrated.empty():
         item = underrated.get()
         results.append(item)
-        connection.send((json.dumps({"a": results})).encode())
+
+    a = (json.dumps({"a": results})).encode()
+    json_file_size = str(len(a))
+
+    print(json_file_size)
+    connection.send(json_file_size)
+    connection.send("\n")
+    connection.send(a)
+    print(a)
 
 def generateProfilePriority(artists, targest_artist_profile, qu):
     for artist in artists:
@@ -174,7 +171,7 @@ def getRelatedArtists_bfs(artist, list, visited, fringe, genres):
                 fringe.put((a['name'], a['id']))
 
 def gen_artist_profile(artist):
-    top_tracks = sp.artist_top_tracks(artist[1])
+    top_tracks = sp.artist_top_tracks(artist)
     profile = {}
     for track in top_tracks['tracks']:
         track_feature = sp.audio_features(str(track['id']))[0]
