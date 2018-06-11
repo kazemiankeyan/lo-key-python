@@ -12,7 +12,7 @@ import multiprocessing as mp
 from multiprocessing import Process, Queue
 import spotipy.util as util
 from spotipy.oauth2 import SpotifyClientCredentials
-from pympler import asizeof
+# from pympler import asizeof
 from Queue import PriorityQueue
 
 
@@ -22,7 +22,7 @@ sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 def main():
     try :
         listening_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server_address = ('127.0.0.1', 50000)
+        server_address = ('192.168.1.6', 50000)
         listening_socket.bind(server_address)
         listening_socket.listen(1000)
         print("Proxy listening on " + str(server_address))
