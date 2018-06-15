@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		B42FB6D220B59B9B00B03079 /* SearchResultCellTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B42FB6D120B59B9B00B03079 /* SearchResultCellTableViewCell.m */; };
 		B462358420A9F757001B0F3D /* SpotifyClient.c in Sources */ = {isa = PBXBuildFile; fileRef = B462358320A9F757001B0F3D /* SpotifyClient.c */; };
+		B4A6016520D36C6300A2AAFD /* ArtistResult.m in Sources */ = {isa = PBXBuildFile; fileRef = B4A6016420D36C6300A2AAFD /* ArtistResult.m */; };
 		B4ACB59D20A44A9E009A6F12 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B4ACB59C20A44A9E009A6F12 /* AppDelegate.m */; };
 		B4ACB5A020A44A9E009A6F12 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B4ACB59F20A44A9E009A6F12 /* ViewController.m */; };
 		B4ACB5A320A44A9E009A6F12 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B4ACB5A120A44A9E009A6F12 /* Main.storyboard */; };
@@ -41,6 +42,8 @@
 		B42FB6D120B59B9B00B03079 /* SearchResultCellTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SearchResultCellTableViewCell.m; sourceTree = "<group>"; };
 		B462358220A9F757001B0F3D /* SpotifyClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpotifyClient.h; sourceTree = "<group>"; };
 		B462358320A9F757001B0F3D /* SpotifyClient.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = SpotifyClient.c; sourceTree = "<group>"; };
+		B4A6016420D36C6300A2AAFD /* ArtistResult.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArtistResult.m; sourceTree = "<group>"; };
+		B4A6016620D36C7900A2AAFD /* ArtistResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArtistResult.h; sourceTree = "<group>"; };
 		B4ACB59820A44A9E009A6F12 /* Lo-Key.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Lo-Key.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4ACB59B20A44A9E009A6F12 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		B4ACB59C20A44A9E009A6F12 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -111,6 +114,8 @@
 				B4ACB59C20A44A9E009A6F12 /* AppDelegate.m */,
 				B4ACB59E20A44A9E009A6F12 /* ViewController.h */,
 				B4ACB59F20A44A9E009A6F12 /* ViewController.m */,
+				B4A6016620D36C7900A2AAFD /* ArtistResult.h */,
+				B4A6016420D36C6300A2AAFD /* ArtistResult.m */,
 				B462358220A9F757001B0F3D /* SpotifyClient.h */,
 				B462358320A9F757001B0F3D /* SpotifyClient.c */,
 				B4ACB5A120A44A9E009A6F12 /* Main.storyboard */,
@@ -275,6 +280,7 @@
 				B4ACB5A020A44A9E009A6F12 /* ViewController.m in Sources */,
 				B462358420A9F757001B0F3D /* SpotifyClient.c in Sources */,
 				B42FB6D220B59B9B00B03079 /* SearchResultCellTableViewCell.m in Sources */,
+				B4A6016520D36C6300A2AAFD /* ArtistResult.m in Sources */,
 				B4ACB5AB20A44AA0009A6F12 /* main.m in Sources */,
 				B4ACB59D20A44A9E009A6F12 /* AppDelegate.m in Sources */,
 			);

@@ -22,7 +22,7 @@ sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 def main():
     try :
         listening_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server_address = ('192.168.1.6', 50000)
+        server_address = ('10.0.0.52', 50000)
         listening_socket.bind(server_address)
         listening_socket.listen(1000)
         print("Proxy listening on " + str(server_address))

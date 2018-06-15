@@ -19,17 +19,17 @@ struct spotify_artist_result *get_search_results(char *name, uint32_t name_lengt
     remoteaddr.sin_family = AF_INET;
     remoteaddr.sin_port = htons(50000);
     
-    if(inet_pton(AF_INET, "192.168.1.6", &remoteaddr.sin_addr.s_addr)<=0)
+    if(inet_pton(AF_INET, "10.0.0.52", &remoteaddr.sin_addr.s_addr)<=0)
     {
-//        printf("\nInvalid address/ Address not supported \n");
+        printf("\nInvalid address/ Address not supported \n");
         return NULL;
     }
     
-//    printf("trying to connect\n");
+    printf("trying to connect\n");
     if (connect(socket_fd, (struct sockaddr *)&remoteaddr, sizeof(remoteaddr)) < 0) {
         return NULL;
     }
-//    printf("connected...\n");
+    printf("connected...\n");
     
     // send primer for message type
     char* buffer = "0\n";

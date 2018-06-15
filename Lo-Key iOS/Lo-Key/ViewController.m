@@ -7,11 +7,13 @@
 //
 
 #import "ViewController.h"
+#import "ArtistResult.h"
 
 @interface ViewController ()
 
 @property (nonatomic) InputFieldLocation inputFieldLocation;
 @property (nonatomic) struct spotify_artist_result *search_results;
+@property (nonatomic) NSMutableArray *objc_results;
 @property (nonatomic) NSUInteger result_size;
 
 @end
@@ -20,6 +22,7 @@
 
 @synthesize search_results;
 @synthesize result_size;
+@synthesize objc_results;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -72,12 +75,17 @@
     
     result_size = num_results;
     NSLog(@"--------------hi-----------------");
-//    NSMutableArray *objc_results = [[NSMutableArray alloc] initWithCapacity:num_results];
+    objc_results = [[NSMutableArray alloc] initWithCapacity:num_results];
     struct spotify_artist_result *res_ptr = search_results;
     for (int i = 0; i < num_results; i++) {
-        NSLog(@"artist name: %s\n", (res_ptr + i)->name);
-        NSLog(@"artist id: %s\n", (res_ptr + i)->artist_id);
+        NSString *name = [NSString stringWithUTF8String:(res_ptr + i)->name];
+        NSString *ID = [NSString stringWithUTF8String:(res_ptr + i)->artist_id];
+        
+        ArtistResult *result = [[ArtistResult alloc] initWithName:name andID:ID];
+        [objc_results addObject:result];
+        NSLog(@"name: %s \nid: %s\n", (res_ptr + i)->name, (res_ptr + i)->artist_id);
     }
+    free(search_results);
 }
 
 - (void)textFieldDidChange {
@@ -132,7 +140,9 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     SearchResultCellTableViewCell *cell = [self.searchResultsTableView dequeueReusableCellWithIdentifier:@"result cell" forIndexPath:indexPath];
-    [cell setup: [[NSString alloc] initWithUTF8String:(search_results + indexPath.row)->name]];
+    ArtistResult *result = objc_results[indexPath.row];
+    NSLog(@"%@\n", result.name);
+    [cell setup: result.name];
     return cell;
 }
 
